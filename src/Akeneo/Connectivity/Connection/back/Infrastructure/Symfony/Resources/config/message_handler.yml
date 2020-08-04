@@ -1,0 +1,9 @@
+services:
+    Akeneo\Connectivity\Connection\Infrastructure\MessageHandler\BusinessEventHandler:
+        tags: [messenger.message_handler]
+
+    Akeneo\Connectivity\Connection\Infrastructure\MessageHandler\FirstHandler:
+        tags: [messenger.message_handler]
+
+    Akeneo\Connectivity\Connection\Infrastructure\MessageHandler\SecondHandler:
+        tags: [messenger.message_handler]
