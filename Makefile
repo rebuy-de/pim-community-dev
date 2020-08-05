@@ -135,12 +135,13 @@ pim-dev:
 .PHONY: pim-prod
 pim-prod:
 	APP_ENV=prod $(MAKE) up
+	APP_ENV=prod $(MAKE) dependencies
 	APP_ENV=prod $(MAKE) cache
 	$(MAKE) assets
 	$(MAKE) css
 	$(MAKE) javascript-prod
 	docker/wait_docker_up.sh
-	APP_ENV=prod $(MAKE) database
+# 	APP_ENV=prod O="--withoutFixtures" $(MAKE) database
 
 .PHONY: up
 up:

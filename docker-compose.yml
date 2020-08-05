@@ -2,7 +2,9 @@ version: '3.4'
 
 services:
   php:
-    image: 'akeneo/pim-php-dev:4.0'
+    build:
+      context: .
+      dockerfile: 'Dockerfile.prod'
     environment:
       APP_ENV: '${APP_ENV:-prod}'
       COMPOSER_HOME: '/var/www/.composer'
@@ -20,7 +22,9 @@ services:
       - 'pim'
 
   fpm:
-    image: 'akeneo/pim-php-dev:4.0'
+    build:
+        context: .
+        dockerfile: 'Dockerfile.prod'
     environment:
       APP_ENV: '${APP_ENV:-prod}'
       BEHAT_TMPDIR: '/srv/pim/var/cache/tmp'
@@ -48,18 +52,8 @@ services:
     networks:
       - 'pim'
 
-  selenium:
-    image: 'selenium/standalone-chrome-debug:3'
-    volumes:
-      - './:/srv/pim:ro'
-      - '/dev/shm:/dev/shm'
-    ports:
-      - '${DOCKER_PORT_SELENIUM:-5910}:5900'
-    networks:
-      - 'pim'
-
-  httpd:
-    image: 'httpd:2.4'
+  nginx:
+    image: 'nginx:stable-alpine'
     environment:
       APP_ENV: '${APP_ENV:-prod}'
     depends_on:
@@ -68,8 +62,7 @@ services:
       - '${DOCKER_PORT_HTTP:-8080}:80'
     volumes:
       - './:/srv/pim:ro'
-      - './docker/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro'
-      - './docker/akeneo.conf:/usr/local/apache2/conf/vhost.conf:ro'
+      - './docker/akeneo.nginx.conf:/etc/nginx/conf.d/akeneo.nginx.conf'
     networks:
       - 'pim'
 
@@ -104,14 +97,6 @@ services:
       MINIO_SECRET_KEY: 'AKENEO_OBJECT_STORAGE_SECRET_KEY'
     ports:
       - '${DOCKER_PORT_OBJECT_STORAGE:-9090}:9000'
-    networks:
-      - 'pim'
-
-  blackfire:
-    image: blackfire/blackfire
-    environment:
-      BLACKFIRE_SERVER_ID: '${BLACKFIRE_SERVER_ID:-server_id}'
-      BLACKFIRE_SERVER_TOKEN: '${BLACKFIRE_SERVER_TOKEN:-server_token}'
     networks:
       - 'pim'
 
